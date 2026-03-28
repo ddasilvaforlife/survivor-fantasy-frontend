@@ -1,23 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import LoginPage from './pages/LoginPage';
+import LeagueDashboard from './pages/LeagueDashboard';
 
 function App() {
+  // Check if user is logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem('token') !== null
+  );
+
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={() => setIsLoggedIn(true)} />;
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <LeagueDashboard />
     </div>
   );
 }
