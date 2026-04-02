@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LeagueDetails from './LeagueDetails';
 import PlayerDatabase from './PlayerDatabase';
+import BrowseLeagues from './BrowseLeagues';
 import API_BASE_URL from '../config';
 
 function LeagueDashboard() {
@@ -10,6 +11,7 @@ function LeagueDashboard() {
   const [message, setMessage] = useState('');
   const [viewingLeagueId, setViewingLeagueId] = useState(null);
   const [viewingPlayers, setViewingPlayers] = useState(false);
+  const [browsingLeagues, setBrowsingLeagues] = useState(false);
   const [newLeague, setNewLeague] = useState({
     name: '',
     season: 47,
@@ -29,6 +31,10 @@ function LeagueDashboard() {
 
   if (viewingPlayers) {
     return <PlayerDatabase onBack={() => setViewingPlayers(false)} />;
+  }
+
+  if (browsingLeagues) {
+    return <BrowseLeagues onBack={() => setBrowsingLeagues(false)} />;
   }
 
   const fetchLeagues = async () => {
@@ -120,6 +126,13 @@ function LeagueDashboard() {
         style={styles.playersButton}
       >
         🔍 Player Database
+      </button>
+
+      <button
+        onClick={() => setBrowsingLeagues(true)}
+        style={styles.browseButton}
+      >
+        🌐 Browse Leagues
       </button>
 
       {showCreateForm && (
@@ -279,9 +292,21 @@ const styles = {
   },
   playersButton: {
     display: 'block',
-    margin: '0 auto 30px',
+    margin: '0 auto 15px',
     padding: '12px 24px',
     backgroundColor: '#764ba2',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    cursor: 'pointer'
+  },
+  browseButton: {
+    display: 'block',
+    margin: '0 auto 30px',
+    padding: '12px 24px',
+    backgroundColor: '#ed8936',
     color: 'white',
     border: 'none',
     borderRadius: '8px',
