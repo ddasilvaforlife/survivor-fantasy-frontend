@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API_BASE_URL from '../config';
+import DraftRoom from './DraftRoom';
 
 function LeagueDetails({ leagueId, onBack }) {
   const [league, setLeague] = useState(null);
@@ -10,6 +11,7 @@ function LeagueDetails({ leagueId, onBack }) {
   const [teamName, setTeamName] = useState('');
   const [isJoining, setIsJoining] = useState(false);
   const [showJoinForm, setShowJoinForm] = useState(false);
+  const [inDraftRoom, setInDraftRoom] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user') || '{"id": 1}');
 
@@ -69,7 +71,6 @@ function LeagueDetails({ leagueId, onBack }) {
     }
   };
 
-  // Check if user already has a team in this league
   const userAlreadyJoined = teams.some(team => team.user_id === user.id);
   const isCommissioner = league && league.commissioner_id === user.id;
   const isFull = league && teams.length >= league.max_teams;
@@ -89,6 +90,10 @@ function LeagueDetails({ leagueId, onBack }) {
         <button onClick={onBack} style={styles.backButton}>Back to Dashboard</button>
       </div>
     );
+  }
+
+  if (inDraftRoom) {
+    return <DraftRoom leagueId={leagueId} onBack={() => setInDraftRoom(false)} />;
   }
 
   const actionRules = scoringRules.filter(rule => !rule.action_type.startsWith('placement_'));
@@ -122,6 +127,15 @@ function LeagueDetails({ leagueId, onBack }) {
             <strong>Created:</strong> {new Date(league.created_at).toLocaleDateString()}
           </div>
         </div>
+
+        {isCommissioner && (
+          <button
+            onClick={() => setInDraftRoom(true)}
+            style={styles.draftButton}
+          >
+            🎯 Enter Draft Room
+          </button>
+        )}
       </div>
 
       {message && (
@@ -133,7 +147,6 @@ function LeagueDetails({ leagueId, onBack }) {
         </div>
       )}
 
-      {/* Join League Section */}
       {!isCommissioner && !userAlreadyJoined && !isFull && (
         <div style={styles.joinCard}>
           {!showJoinForm ? (
@@ -189,7 +202,6 @@ function LeagueDetails({ leagueId, onBack }) {
         </div>
       )}
 
-      {/* Teams Section */}
       <div style={styles.teamsCard}>
         <h3 style={styles.sectionTitle}>🏆 Teams ({teams.length}/{league.max_teams})</h3>
         {teams.length === 0 ? (
@@ -210,10 +222,9 @@ function LeagueDetails({ leagueId, onBack }) {
         )}
       </div>
 
-      {/* Scoring Rules */}
       <div style={styles.rulesCard}>
         <h3 style={styles.sectionTitle}>📊 Scoring Rules</h3>
-        
+
         <h4 style={styles.subsectionTitle}>Action-Based Scoring:</h4>
         <div style={styles.rulesGrid}>
           {actionRules
@@ -308,6 +319,17 @@ const styles = {
     boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
     maxWidth: '1200px',
     margin: '0 auto 20px'
+  },
+  draftButton: {
+    marginTop: '20px',
+    padding: '12px 24px',
+    backgroundColor: '#667eea',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    cursor: 'pointer'
   },
   joinCard: {
     backgroundColor: 'white',
@@ -405,7 +427,7 @@ const styles = {
     color: '#721c24',
     border: '1px solid #f5c6cb'
   },
-  rulesCard: {
+  teamsCard: {
     backgroundColor: 'white',
     padding: '30px',
     borderRadius: '10px',
@@ -413,7 +435,7 @@ const styles = {
     maxWidth: '1200px',
     margin: '0 auto 20px'
   },
-  teamsCard: {
+  rulesCard: {
     backgroundColor: 'white',
     padding: '30px',
     borderRadius: '10px',
