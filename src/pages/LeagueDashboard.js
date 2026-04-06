@@ -4,8 +4,7 @@ import PlayerDatabase from './PlayerDatabase';
 import BrowseLeagues from './BrowseLeagues';
 import API_BASE_URL from '../config';
 
-
-function LeagueDashboard() {
+function LeagueDashboard({ onLogout }) {
   const [leagues, setLeagues] = useState([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,6 +36,11 @@ function LeagueDashboard() {
   if (browsingLeagues) {
     return <BrowseLeagues onBack={() => setBrowsingLeagues(false)} />;
   }
+
+  const handleLogout = () => {
+    localStorage.clear();
+    if (onLogout) onLogout();
+  };
 
   const fetchLeagues = async () => {
     setIsLoading(true);
@@ -111,8 +115,13 @@ function LeagueDashboard() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h1 style={styles.title}>🏝️ My Survivor Leagues</h1>
-        <p style={styles.subtitle}>Welcome back, {user.username || 'Player'}!</p>
+        <div>
+          <h1 style={styles.title}>🏝️ My Survivor Leagues</h1>
+          <p style={styles.subtitle}>Welcome back, {user.username || 'Player'}!</p>
+        </div>
+        <button onClick={handleLogout} style={styles.logoutButton}>
+          🚪 Logout
+        </button>
       </div>
 
       <button
@@ -267,17 +276,31 @@ const styles = {
     padding: '40px 20px'
   },
   header: {
-    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: '30px'
   },
   title: {
     color: 'white',
     fontSize: '36px',
-    marginBottom: '10px'
+    marginBottom: '10px',
+    margin: 0
   },
   subtitle: {
     color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: '18px'
+    fontSize: '18px',
+    margin: 0
+  },
+  logoutButton: {
+    padding: '10px 20px',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    color: 'white',
+    border: '2px solid white',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    cursor: 'pointer'
   },
   createButton: {
     display: 'block',

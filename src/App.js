@@ -3,10 +3,14 @@ import LoginPage from './pages/LoginPage';
 import LeagueDashboard from './pages/LeagueDashboard';
 
 function App() {
-  // Check if user is logged in
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem('token') !== null
   );
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setIsLoggedIn(false);
+  };
 
   if (!isLoggedIn) {
     return <LoginPage onLogin={() => setIsLoggedIn(true)} />;
@@ -14,7 +18,7 @@ function App() {
 
   return (
     <div className="App">
-      <LeagueDashboard />
+      <LeagueDashboard onLogout={handleLogout} />
     </div>
   );
 }
